@@ -1,0 +1,12 @@
+server: 
+    port: 8080
+    servlet:
+        context-path: /
+
+logging:
+    level:
+        root: INFO
+        '[com.pbgama.game_leaderboard]': DEBUG
+spring:
+    application:
+        name: game-leaderboard
