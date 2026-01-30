@@ -1,12 +1,13 @@
 package com.pbgama.game_leaderboard.controller;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pbgama.game_leaderboard.dto.request.CreatePlayerRequest;
 import com.pbgama.game_leaderboard.model.Player;
+import java.util.UUID;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,26 +16,32 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-
 @RestController
 @RequestMapping("/api/players")
 public class PlayersController {
-    private List<Player> playersData = new ArrayList<>();
+    private final List<Player> playersData = new CopyOnWriteArrayList<>();
 
     @PostMapping("")
-    public String createPlayer(@RequestBody CreatePlayerRequest req) {
+    public ResponseEntity<String> createPlayer(@RequestBody CreatePlayerRequest req) {
         try {
-            var newPlayer = createPlayerInternal(req);
-            return "Player has been created successfully, Player Id: " + newPlayer.getId();
+            var response = createPlayerInternal(req);
+            return response.getStatusCode().is2xxSuccessful() ? ResponseEntity.ok("Player has been created successfully, Player Id: " + response.getBody().getId()) 
+                : ResponseEntity.badRequest().body("Player creation failed: " + response.getBody());
         } catch (Exception ex) {
-            return "Player creation failed: " + ex.getMessage();
+            return ResponseEntity.badRequest().body("Player creation failed: " + ex.getMessage());
         }
     }
 
     @GetMapping("/{id}")
-    public String getPlayer(@PathVariable String id) {
-        return id;
+    public ResponseEntity<Player> getPlayer(@PathVariable String id) {
+        var result = playersData.stream()
+            .filter(player -> player.getId().equals(UUID.fromString(id)))
+            .findFirst();
+
+        return result.isEmpty() ? ResponseEntity.notFound().build() 
+            : ResponseEntity.ok(result.get());
     }
 
     @PutMapping("/{id}")
@@ -48,18 +55,33 @@ public class PlayersController {
     }
 
     @DeleteMapping("/{id}")
-    public String deletePlayer(@PathVariable String id) {
-        return id;
+    public ResponseEntity<String> deletePlayer(@PathVariable String id) {
+        return deletePlayerInternal(id) ? ResponseEntity.ok("Player deleted successfully") 
+            : ResponseEntity.badRequest().body("Something went wrong");
     }
 
-    private Player createPlayerInternal(CreatePlayerRequest req) 
+    private ResponseEntity<Player> createPlayerInternal(CreatePlayerRequest req) 
     {
+        if (checkPlayerExistsByUsername(req.getUsername())) {
+            return ResponseEntity.badRequest().body(null);
+        }
+
         var newEntry = Player.builder()
                 .username(req.getUsername())
                 .email(req.getEmail())
                 .build();
 
         playersData.add(newEntry);
-        return newEntry;
+        return ResponseEntity.ok(newEntry);
+    }
+
+    private Boolean deletePlayerInternal(String id) {
+        return playersData.removeIf(player -> player.getId().equals(UUID.fromString(id))) ? true : false;
+    }
+
+    private Boolean checkPlayerExistsByUsername(String username) 
+    {
+        return playersData.stream()
+            .anyMatch(player -> player.getUsername().equals(username)) ? true: false;
     }
 }
