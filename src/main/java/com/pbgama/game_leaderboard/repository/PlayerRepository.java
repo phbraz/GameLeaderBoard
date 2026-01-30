@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 public class PlayerRepository 
 {
     private final Map<Long, Player> storage = new ConcurrentHashMap<>();
-    private final AtomicLong idGenerator = new AtomicLong(1);
+    private final AtomicLong idGenerator = new AtomicLong(0);
 
     public Player save(Player player) {
         if (player.getId() == null) {

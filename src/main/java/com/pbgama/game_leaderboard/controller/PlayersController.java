@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pbgama.game_leaderboard.dto.request.CreatePlayerRequest;
 import com.pbgama.game_leaderboard.dto.request.UpdatePlayerRequest;
 import com.pbgama.game_leaderboard.model.Player;
+import java.util.List;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -66,6 +67,15 @@ public class PlayersController {
     public ResponseEntity<Player> deletePlayer(@PathVariable Long id) {
         try {
             return playerService.deletePlayer(id);
+        } catch (Exception ex) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+    @GetMapping("/find-all")
+    public ResponseEntity<List<Player>> findAllPlayers() {
+        try {
+            return playerService.findAllPlayers();
         } catch (Exception ex) {
             return ResponseEntity.badRequest().body(null);
         }

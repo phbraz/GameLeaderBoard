@@ -8,7 +8,7 @@ import com.pbgama.game_leaderboard.model.Player;
 import com.pbgama.game_leaderboard.dto.request.UpdatePlayerRequest;
 import com.pbgama.game_leaderboard.repository.PlayerRepository;
 import java.time.LocalDateTime;
-
+import java.util.List;
 @Service
 public class PlayerService 
 {
@@ -62,5 +62,9 @@ public class PlayerService
         
         repository.deleteById(id);
         return ResponseEntity.ok().build();
+    }
+
+    public ResponseEntity<List<Player>> findAllPlayers() {
+        return ResponseEntity.ok(repository.findAll());
     }
 }
