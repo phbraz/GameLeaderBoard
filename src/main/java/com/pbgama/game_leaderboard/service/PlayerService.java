@@ -1,6 +1,7 @@
 package com.pbgama.game_leaderboard.service;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import com.pbgama.game_leaderboard.dto.request.CreatePlayerRequest;
 import com.pbgama.game_leaderboard.model.Player;
@@ -8,6 +9,7 @@ import com.pbgama.game_leaderboard.dto.request.UpdatePlayerRequest;
 import com.pbgama.game_leaderboard.repository.PlayerRepository;
 import java.time.LocalDateTime;
 
+@Service
 public class PlayerService 
 {
     private final PlayerRepository repository;

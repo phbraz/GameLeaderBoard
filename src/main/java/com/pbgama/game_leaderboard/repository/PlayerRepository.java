@@ -7,6 +7,9 @@ import com.pbgama.game_leaderboard.model.Player;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.stereotype.Repository;
+
+@Repository
 public class PlayerRepository 
 {
     private final Map<Long, Player> storage = new ConcurrentHashMap<>();
