@@ -1,8 +1,5 @@
 package com.pbgama.game_leaderboard.controller;
 
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pbgama.game_leaderboard.dto.request.CreatePlayerRequest;
