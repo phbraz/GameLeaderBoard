@@ -1,7 +1,5 @@
 package com.pbgama.game_leaderboard.model;
 
-import java.util.UUID;
-
 import org.jspecify.annotations.Nullable;
 
 import lombok.Data;
@@ -11,8 +9,7 @@ import lombok.Builder;
 @Data
 @Builder
 public class Player {
-    @Builder.Default
-    private UUID id = UUID.randomUUID();
+    private Long id;
     private String username;
     private String email;
     @Nullable
