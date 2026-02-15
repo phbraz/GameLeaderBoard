@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import com.pbgama.game_leaderboard.model.Player;
 import java.util.List;
 import java.util.stream.Collectors;
-
+import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -17,34 +17,57 @@ public class PlayerRepository
 
     public Player save(Player player) {
         if (player.getId() == null) {
+            if (existsByUsername(player.getUsername())) {
+                throw new IllegalArgumentException("Username already exists");
+            }
             player.setId(idGenerator.incrementAndGet());
+        } else {
+            Player existing = storage.get(player.getId());
+            if (existing != null && !existing.getUsername().equals(player.getUsername())) {
+                if (existsByUsername(player.getUsername())) {
+                    throw new IllegalArgumentException("Username already exists");
+                }
+            }
         }
-        if (existingUsername(player.getUsername())) {
-            throw new IllegalArgumentException("Username already exists");
-        }
-
+        
         storage.put(player.getId(), player);
         return player;
     }
 
-    public Player findById(Long id) {
+    public Optional<Player> findById(Long id) 
+    {
         return storage.values()
-        .stream().filter(player -> player.getId().equals(id)).findFirst().orElse(null);
+            .stream()
+            .filter(player -> player.getId().equals(id))
+            .findFirst();
     }
 
-    public Player findByUsername(String username) {
-        return storage.values().stream().filter(player -> player.getUsername().equals(username)).findFirst().orElse(null);
+    public Optional<Player> findByUsername(String username) 
+    {
+        return storage.values()
+            .stream()
+            .filter(player -> player.getUsername()
+            .equals(username))
+            .findFirst();
     }
 
-    public void deleteById(Long id) {
+    public void deleteById(Long id) 
+    {
         storage.remove(id);
     }
 
-    public List<Player> findAll() {
-        return storage.values().stream().collect(Collectors.toUnmodifiableList());
+    public List<Player> findAll() 
+    {
+        return storage.values()
+            .stream()
+            .collect(Collectors.toUnmodifiableList());
     }
 
-    public boolean existingUsername(String username) {
-        return storage.values().stream().anyMatch(player -> player.getUsername().equals(username));
+    public boolean existsByUsername(String username) 
+    {
+        return storage.values()
+            .stream()
+            .anyMatch(player -> player.getUsername()
+            .equals(username));
     }
 }

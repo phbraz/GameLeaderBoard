@@ -20,13 +20,22 @@ public class Player {
     private LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime updatedAt;
 
-    public void updateScore(Integer newScore) 
-    {
-        if (newScore > this.currentScore) 
-        {
+    public void updateScore(Integer newScore) {
+        if (newScore == null) {
+            return;  // Nothing to update
+        }
+        
+        // Initialize if null
+        if (this.currentScore == null) {
+            this.currentScore = 0;
+        }
+        if (this.highestScore == null) {
+            this.highestScore = 0;
+        }
+        
+        if (newScore > this.currentScore) {
             this.currentScore = newScore;
-            if (this.highestScore == null || newScore > this.highestScore)
-            {
+            if (newScore > this.highestScore) {
                 this.highestScore = newScore;
             }
             this.updatedAt = LocalDateTime.now();

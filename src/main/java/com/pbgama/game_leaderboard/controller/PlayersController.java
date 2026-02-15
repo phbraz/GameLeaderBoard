@@ -7,17 +7,17 @@ import com.pbgama.game_leaderboard.dto.request.UpdatePlayerRequest;
 import com.pbgama.game_leaderboard.model.Player;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import com.pbgama.game_leaderboard.service.PlayerService;
-
+import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/players")
 public class PlayersController {
@@ -27,57 +27,33 @@ public class PlayersController {
         this.playerService = playerService;
     }
 
-    @PostMapping("")
-    public ResponseEntity<Player> createPlayer(@RequestBody CreatePlayerRequest req) {
-        try {
-            return playerService.createPlayer(req);            
-        } catch (Exception ex) {
-            return ResponseEntity.badRequest().body(null);
-        }
+    @PostMapping
+    public ResponseEntity<Player> createPlayer(@Valid @RequestBody CreatePlayerRequest req) {
+        Player player = playerService.createPlayer(req);
+        return ResponseEntity.status(HttpStatus.CREATED).body(player);  // 201
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Player> getPlayer(@PathVariable Long id) {
-        try {
-            return playerService.getPlayer(id);
-        } catch (Exception ex) {
-            return ResponseEntity.badRequest().body(null);
-        }
+        Player player = playerService.getPlayer(id);
+        return ResponseEntity.ok(player);  // 200
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Player> updatePlayer(@PathVariable Long id, @RequestBody UpdatePlayerRequest req) {
-        try {
-            return playerService.updatePlayer(id, req);
-        } catch (Exception ex) {
-            return ResponseEntity.badRequest().body(null);
-        }
-    }
-
-    @PatchMapping("/{id}")
-    public ResponseEntity<Player> partialUpdatePlayer(@PathVariable Long id, @RequestBody UpdatePlayerRequest req) {
-        try {
-            return playerService.updatePlayer(id, req);
-        } catch (Exception ex) {
-            return ResponseEntity.badRequest().body(null);
-        }
+        Player player = playerService.updatePlayer(id, req);
+        return ResponseEntity.ok(player);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Player> deletePlayer(@PathVariable Long id) {
-        try {
-            return playerService.deletePlayer(id);
-        } catch (Exception ex) {
-            return ResponseEntity.badRequest().body(null);
-        }
+    public ResponseEntity<Void> deletePlayer(@PathVariable Long id) {
+        playerService.deletePlayer(id);
+        return ResponseEntity.noContent().build();  // 204
     }
 
-    @GetMapping("/find-all")
+    @GetMapping
     public ResponseEntity<List<Player>> findAllPlayers() {
-        try {
-            return playerService.findAllPlayers();
-        } catch (Exception ex) {
-            return ResponseEntity.badRequest().body(null);
-        }
+        List<Player> players = playerService.findAllPlayers();
+        return ResponseEntity.ok(players);
     }
 }
