@@ -19,6 +19,9 @@ public class PlayerRepository
         if (player.getId() == null) {
             player.setId(idGenerator.incrementAndGet());
         }
+        if (existingUsername(player.getUsername())) {
+            throw new IllegalArgumentException("Username already exists");
+        }
 
         storage.put(player.getId(), player);
         return player;
@@ -39,5 +42,9 @@ public class PlayerRepository
 
     public List<Player> findAll() {
         return storage.values().stream().collect(Collectors.toUnmodifiableList());
+    }
+
+    public boolean existingUsername(String username) {
+        return storage.values().stream().anyMatch(player -> player.getUsername().equals(username));
     }
 }

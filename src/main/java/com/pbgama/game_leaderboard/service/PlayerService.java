@@ -48,7 +48,7 @@ public class PlayerService
         player.setEmail(req.getEmail());
         player.setCurrentScore(req.getCurrentScore());
         player.setHighestScore(req.getHighestScore());
-        player.setUpdateAt(LocalDateTime.now());
+        player.setUpdatedAt(LocalDateTime.now());
         repository.save(player);
 
         return ResponseEntity.ok(player);

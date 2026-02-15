@@ -1,23 +1,35 @@
 package com.pbgama.game_leaderboard.model;
 
-import org.jspecify.annotations.Nullable;
 
 import lombok.Data;
 import java.time.LocalDateTime;
 import lombok.Builder;
-
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Player {
     private Long id;
     private String username;
     private String email;
-    @Nullable
-    private Double currentScore;
-    @Nullable
-    private Double highestScore;
+    private Integer currentScore;
+    private Integer highestScore;
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
-    @Nullable
-    private LocalDateTime updateAt;
+    private LocalDateTime updatedAt;
+
+    public void updateScore(Integer newScore) 
+    {
+        if (newScore > this.currentScore) 
+        {
+            this.currentScore = newScore;
+            if (this.highestScore == null || newScore > this.highestScore)
+            {
+                this.highestScore = newScore;
+            }
+            this.updatedAt = LocalDateTime.now();
+        }
+    }
 }
